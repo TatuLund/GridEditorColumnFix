@@ -7,6 +7,7 @@ import com.google.gwt.animation.client.AnimationScheduler.AnimationCallback;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.Window;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ServerConnector;
 import com.vaadin.client.extensions.AbstractExtensionConnector;
@@ -38,13 +39,20 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
 		return editor.@com.vaadin.client.widgets.Grid.Editor::cellWrapper;
 	}-*/;
 
-	@Override
+    public static native final DivElement getEditorOverlay(Grid<?> grid) /*-{
+		var editor = grid.@com.vaadin.client.widgets.Grid::getEditor()();
+		return editor.@com.vaadin.client.widgets.Grid.Editor::editorOverlay;
+	}-*/;
+
+    @Override
 	protected void extend(ServerConnector target) {
         grid = (Grid<Object>) ((ComponentConnector) target).getWidget();
         AnimationCallback editorColumnWidthFix = new AnimationCallback() {
             @Override
             public void execute(double timestamp) {
         		int cols = grid.getVisibleColumns().size();
+        		DivElement editorOverlay = getEditorOverlay(grid);
+        		editorOverlay.getStyle().setWidth(grid.getOffsetWidth(), Style.Unit.PX);
         		DivElement cellWrapper = getEditorCellWrapper(grid);
             	for (int i=0;i<cols;i++) {
             		Element element = (Element) cellWrapper.getChild(i);
@@ -64,6 +72,11 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
         		AnimationScheduler.get().requestAnimationFrame(editorColumnWidthFix);
         	}        	
         });
+		Window.addResizeHandler(event -> {
+        	if (grid.isEditorActive()) {
+        		AnimationScheduler.get().requestAnimationFrame(editorColumnWidthFix);
+        	}
+		});
 
 	}
 }

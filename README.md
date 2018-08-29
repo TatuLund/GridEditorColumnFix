@@ -52,6 +52,9 @@ Debugging client side code in the grideditorcolumnfix-demo project:
  
 ## Release notes
 
+### Version 0.2.0
+- Added fix to Editor not resized when browser window is being resized bug. See: https://github.com/vaadin/framework/issues/11148
+
 ### Version 0.1.0
 - Initial release
 
