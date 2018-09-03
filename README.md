@@ -4,6 +4,7 @@ GridEditorColumnFix is a an extension add-on for Vaadin 8 Grid fixing two issues
 
 - Editor is out of sync with hidden columns https://github.com/vaadin/framework/issues/8962
 - Editor column widths are out of sync with column resizing for https://github.com/vaadin/framework/issues/7276
+- Editor not resized when browser window is being resized https://github.com/vaadin/framework/issues/11148
 
 Note, if you use GridFastNavigation add-on, this extension is not required, same fixes are included in it.
 
@@ -52,6 +53,9 @@ Debugging client side code in the grideditorcolumnfix-demo project:
  
 ## Release notes
 
+### Version 0.2.1
+- Fix: Editor resizing fix did not take Grid's scrollbar into consideration 
+
 ### Version 0.2.0
 - Added fix to Editor not resized when browser window is being resized bug. See: https://github.com/vaadin/framework/issues/11148
 
@@ -60,7 +64,7 @@ Debugging client side code in the grideditorcolumnfix-demo project:
 
 ## Roadmap
 
-This component is developed as a hobby with no public roadmap or any guarantees of upcoming releases. That said, the following features are planned for upcoming releases:
+This component is developed as a hobby with no public roadmap or any guarantees of upcoming releases. That said, the following features are planned for upcoming releases: Once fixes are found stable, pull request to Framework will be considered
 
 ## Issue tracking
 
