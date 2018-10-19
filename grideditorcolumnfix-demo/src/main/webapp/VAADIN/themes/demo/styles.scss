@@ -19,6 +19,18 @@ $darkgreen: darken($green, 30%);
 		background-repeat: no-repeat;
 	}
 	
+	.v-grid-editor-cells {
+		div:nth-child(3) {
+			text-align: center;
+		}		
+	}
+
+	.v-grid-cell.long-text:hover {
+		white-space: normal;
+		word-wrap: break-word;
+		overflow-y: auto;
+	}
+	
 	// You can also customize your component for the demo
 	// app, but remember that these styles are not part of
 	// the component. To include built-in CSS for your component,

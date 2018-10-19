@@ -1,5 +1,6 @@
 package org.vaadin.grideditorcolumnfix.demo;
 
+import org.apache.commons.lang3.StringUtils;
 import org.vaadin.grideditorcolumnfix.GridEditorColumnFix;
 
 import java.math.BigDecimal;
@@ -24,14 +25,17 @@ import com.vaadin.data.converter.LocalDateTimeToDateConverter;
 import com.vaadin.data.converter.StringToBigDecimalConverter;
 import com.vaadin.data.converter.StringToIntegerConverter;
 import com.vaadin.data.validator.IntegerRangeValidator;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.renderers.HtmlRenderer;
 
 @Theme("demo")
 @Title("GridEditorColumnFix Add-on Demo")
@@ -54,7 +58,8 @@ public class DemoUI extends UI {
 		Random random = new Random(4837291937l);
 		List<SimplePojo> data = new ArrayList<>();
 		for (int i = 0; i < 100; i++) {
-			data.add(new SimplePojo(i, "Bean", true, new Date(),
+			String description = StringUtils.repeat("text", " ", Integer.valueOf(random.nextInt(50)));
+			data.add(new SimplePojo(i, description, true, new Date(),
 					BigDecimal.valueOf(random.nextDouble() * 100), Integer
 							.valueOf(random.nextInt(5))));
 		}
@@ -64,7 +69,7 @@ public class DemoUI extends UI {
 		TextField textField = new TextField();
 		Binding<SimplePojo, String> descriptionBinding = binder.forField(textField).asRequired("Empty value not accepted").bind(SimplePojo::getDescription,
 				SimplePojo::setDescription);
-		grid.addColumn(SimplePojo::getDescription).setEditorBinding(descriptionBinding).setHidable(true).setCaption("Description");			
+		grid.addColumn(SimplePojo::getDescription).setEditorBinding(descriptionBinding).setHidable(true).setCaption("Description").setStyleGenerator(item -> (item.getDescription().length() > 100 ? "long-text" : null)).setWidth(600);			
 
 		TextField starsField = new TextField();
 		Binding<SimplePojo, Integer> starsBinding = binder.forField(starsField).withNullRepresentation("")
@@ -75,7 +80,8 @@ public class DemoUI extends UI {
 		CheckBox checkBox = new CheckBox();
 		Binding<SimplePojo, Boolean> truthBinding = binder.forField(checkBox).bind(SimplePojo::isTruth,
 				SimplePojo::setTruth);
-		grid.addColumn(SimplePojo::isTruth).setEditorBinding(truthBinding).setHidable(true).setCaption("In stock");
+		grid.addColumn(simplePojo -> (simplePojo.isTruth() ? VaadinIcons.CHECK_SQUARE_O : VaadinIcons.THIN_SQUARE).getHtml()
+				, new HtmlRenderer()).setEditorBinding(truthBinding).setHidable(true).setCaption("In stock").setStyleGenerator(style -> "v-align-center");
 
 		DateTimeField dateField = new DateTimeField();
 		OffsetDateTime odt = OffsetDateTime.now(ZoneId.systemDefault());
@@ -95,8 +101,13 @@ public class DemoUI extends UI {
 		
 		grid.setItems(data);
 		grid.setSizeFull();
+//		grid.setDetailsGenerator(item -> new Label(item.getDescription()));
+//		grid.addItemClickListener(event -> {
+//			if (grid.isDetailsVisible(event.getItem())) grid.setDetailsVisible(event.getItem(), false);
+//			else grid.setDetailsVisible(event.getItem(), true);			
+//		});
         grid.getEditor().setEnabled(true);
-        grid.getEditor().setBuffered(true);
+        grid.getEditor().setBuffered(false);
         
         // Show it in the middle of the screen
         final VerticalLayout layout = new VerticalLayout();
