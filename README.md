@@ -56,6 +56,9 @@ Debugging client side code in the grideditorcolumnfix-demo project:
  
 ## Release notes
 
+### Version 0.3.1
+- Improved the scroll position fix and fixed side effects
+
 ### Version 0.3.0
 - Added fix to Editor scroll position not correctly aligned with Grid when opening. See: https://github.com/vaadin/framework/issues/6994
 

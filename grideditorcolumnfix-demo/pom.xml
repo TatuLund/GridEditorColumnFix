@@ -5,7 +5,7 @@
 	<groupId>org.vaadin</groupId>
 	<artifactId>grideditorcolumnfix-demo</artifactId>
 	<packaging>war</packaging>
-	<version>0.3.0</version>
+	<version>0.3.1</version>
 	<name>GridEditorColumnFix Add-on Demo</name>
 
 	<prerequisites>

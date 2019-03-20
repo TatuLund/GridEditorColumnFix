@@ -4,10 +4,12 @@ import org.vaadin.grideditorcolumnfix.GridEditorColumnFix;
 
 import com.google.gwt.animation.client.AnimationScheduler;
 import com.google.gwt.animation.client.AnimationScheduler.AnimationCallback;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.user.client.Window;
 import com.vaadin.client.BrowserInfo;
 import com.vaadin.client.ComponentConnector;
@@ -71,7 +73,21 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
 		}
 		return ary;
 	}
-    
+
+	private void doEditorScrollOffsetFix() {
+		double scrollLeft = grid.getScrollLeft();
+		DivElement cellWrapper = getEditorCellWrapper(grid);
+        TableRowElement rowElement = grid.getEscalator().getBody()
+                .getRowElement(grid.getEditor().getRow());
+        int rowLeft = Math.abs(rowElement.getAbsoluteLeft());
+        int editorLeft = Math.abs(cellWrapper.getAbsoluteLeft());
+        VConsole.log("scrollLeft: "+scrollLeft+" rowLeft: "+rowLeft+" editorLeft"+editorLeft);
+        if (editorLeft != rowLeft) {
+            cellWrapper.getStyle().setLeft(editorLeft - (scrollLeft + rowLeft),
+                    Style.Unit.PX);
+        }
+	}
+	
     @Override
 	protected void extend(ServerConnector target) {
     	grid = (Grid<Object>) ((ComponentConnector) target).getWidget();
@@ -107,13 +123,17 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
         AnimationCallback editorScrollOffsetFix = new AnimationCallback() {
             @Override
             public void execute(double timestamp) {
-        		int cols = grid.getVisibleColumns().size();
-        		int scrollLeft = (int) grid.getScrollLeft();
-        		DivElement cellWrapper = getEditorCellWrapper(grid);
-        		cellWrapper.setScrollLeft(scrollLeft);
+        		doEditorScrollOffsetFix();
             }
+
         };
-        
+        grid.addScrollHandler(event -> {
+        	if (grid.isEditorActive()) {
+        		Scheduler.get().scheduleFinally(() -> {
+            		doEditorScrollOffsetFix();        			
+        		});
+        	}        					        	
+        });        
         grid.addColumnVisibilityChangeHandler(event -> {
         	if (grid.isEditorActive()) {
         		redrawEditor(grid);
