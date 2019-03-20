@@ -1,5 +1,6 @@
 package org.vaadin.grideditorcolumnfix;
 
+import org.vaadin.grideditorcolumnfix.client.GridEditorColumnFixClientRpc;
 import org.vaadin.grideditorcolumnfix.client.GridEditorColumnFixState;
 
 import com.vaadin.server.AbstractExtension;
@@ -11,6 +12,9 @@ public class GridEditorColumnFix extends AbstractExtension {
 
     public GridEditorColumnFix(Grid grid) {
 		this.extend(grid);
+		grid.getEditor().addOpenListener(event -> {
+			getRpc().applyFix();
+		});
     }
 
     // We must override getState() to cast the state to GridEditorColumnFixState
@@ -18,5 +22,8 @@ public class GridEditorColumnFix extends AbstractExtension {
     protected GridEditorColumnFixState getState() {
         return (GridEditorColumnFixState) super.getState();
     }
-    
+ 
+	private GridEditorColumnFixClientRpc getRpc() {
+		return getRpcProxy(GridEditorColumnFixClientRpc.class);
+	}    
 }

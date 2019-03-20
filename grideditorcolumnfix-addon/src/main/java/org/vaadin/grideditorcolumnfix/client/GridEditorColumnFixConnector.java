@@ -12,6 +12,8 @@ import com.google.gwt.user.client.Window;
 import com.vaadin.client.BrowserInfo;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ServerConnector;
+import com.vaadin.client.VConsole;
+import com.vaadin.client.data.DataChangeHandler;
 import com.vaadin.client.extensions.AbstractExtensionConnector;
 import com.vaadin.client.widgets.Grid;
 import com.vaadin.shared.ui.Connect;
@@ -72,7 +74,7 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
     
     @Override
 	protected void extend(ServerConnector target) {
-        grid = (Grid<Object>) ((ComponentConnector) target).getWidget();
+    	grid = (Grid<Object>) ((ComponentConnector) target).getWidget();
         AnimationCallback editorColumnAndWidthFix = new AnimationCallback() {
             @Override
             public void execute(double timestamp) {
@@ -102,6 +104,15 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
             	}
             }
         };
+        AnimationCallback editorScrollOffsetFix = new AnimationCallback() {
+            @Override
+            public void execute(double timestamp) {
+        		int cols = grid.getVisibleColumns().size();
+        		int scrollLeft = (int) grid.getScrollLeft();
+        		DivElement cellWrapper = getEditorCellWrapper(grid);
+        		cellWrapper.setScrollLeft(scrollLeft);
+            }
+        };
         
         grid.addColumnVisibilityChangeHandler(event -> {
         	if (grid.isEditorActive()) {
@@ -120,5 +131,13 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
         	}
 		});
 
+    	registerRpc(GridEditorColumnFixClientRpc.class, new GridEditorColumnFixClientRpc() {
+			@Override
+			public void applyFix() {
+	        	if (grid.isEditorActive()) {
+	        		AnimationScheduler.get().requestAnimationFrame(editorScrollOffsetFix);
+	        	}        					
+			}    		
+    	});    	
 	}
 }

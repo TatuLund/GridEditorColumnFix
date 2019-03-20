@@ -56,6 +56,9 @@ Debugging client side code in the grideditorcolumnfix-demo project:
  
 ## Release notes
 
+### Version 0.3.0
+- Added fix to Editor scroll position not correctly aligned with Grid when opening. See: https://github.com/vaadin/framework/issues/6994
+
 ### Version 0.2.1
 - Fix: Editor resizing fix did not take Grid's scrollbar into consideration 
 

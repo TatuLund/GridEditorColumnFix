@@ -16,6 +16,9 @@ import java.util.Random;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.vaadin.addon.charts.Chart;
+import com.vaadin.addon.charts.model.DataSeries;
+import com.vaadin.addon.charts.model.Series;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -28,13 +31,16 @@ import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.server.VaadinServletService;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.renderers.HtmlRenderer;
 
 @Theme("demo")
@@ -46,11 +52,13 @@ public class DemoUI extends UI {
     @WebServlet(value = "/*", asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = DemoUI.class)
     public static class Servlet extends VaadinServlet {
+    	
     }
 
     @Override
     protected void init(VaadinRequest request) {
 
+   	
         // Initialize our new UI component
 		final Grid<SimplePojo> grid = new Grid<>();
         final GridEditorColumnFix component = new GridEditorColumnFix(grid);
@@ -70,7 +78,8 @@ public class DemoUI extends UI {
 		Binding<SimplePojo, String> descriptionBinding = binder.forField(textField).asRequired("Empty value not accepted").bind(SimplePojo::getDescription,
 				SimplePojo::setDescription);
 		grid.addColumn(SimplePojo::getDescription).setEditorBinding(descriptionBinding).setHidable(true).setCaption("Description").setStyleGenerator(item -> (item.getDescription().length() > 100 ? "long-text" : null)).setWidth(600);			
-
+		descriptionBinding.setReadOnly(true);
+		
 		TextField starsField = new TextField();
 		Binding<SimplePojo, Integer> starsBinding = binder.forField(starsField).withNullRepresentation("")
 				.withConverter(new StringToIntegerConverter("Must enter a number")).withValidator(new IntegerRangeValidator("Input integer between 0 and 10",0,10))
@@ -101,6 +110,16 @@ public class DemoUI extends UI {
 		
 		grid.setItems(data);
 		grid.setSizeFull();
+		grid.setSelectionMode(SelectionMode.SINGLE);
+		grid.addSelectionListener(event -> {			
+			System.out.println("Selection");
+			grid.getSelectionModel().getFirstSelectedItem().ifPresent(item -> System.out.println(item.toString()));			
+		});
+		grid.getEditor().addOpenListener(event -> {
+			grid.select(event.getBean());
+		});
+		
+		
 //		grid.setDetailsGenerator(item -> new Label(item.getDescription()));
 //		grid.addItemClickListener(event -> {
 //			if (grid.isDetailsVisible(event.getItem())) grid.setDetailsVisible(event.getItem(), false);
@@ -108,11 +127,19 @@ public class DemoUI extends UI {
 //		});
         grid.getEditor().setEnabled(true);
         grid.getEditor().setBuffered(false);
-        
+//        grid.setFrozenColumnCount(2);
+        Chart chart = new Chart();
+        DataSeries ds = new DataSeries();
+        ds.setData(10,20,30,20,5,40,10);
+        chart.getConfiguration().setSeries(ds);
+        chart.setSizeFull();
+
         // Show it in the middle of the screen
         final VerticalLayout layout = new VerticalLayout();
         layout.setStyleName("demoContentLayout");
-        layout.addComponent(grid);
+        layout.addComponents(grid,chart);
+        layout.setExpandRatio(grid, 3);
+        layout.setExpandRatio(chart, 1);
         layout.setSizeFull();
         layout.setMargin(false);
         layout.setSpacing(false);
