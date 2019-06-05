@@ -81,7 +81,6 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
                 .getRowElement(grid.getEditor().getRow());
         int rowLeft = Math.abs(rowElement.getAbsoluteLeft());
         int editorLeft = Math.abs(cellWrapper.getAbsoluteLeft());
-        VConsole.log("scrollLeft: "+scrollLeft+" rowLeft: "+rowLeft+" editorLeft"+editorLeft);
         if (editorLeft != rowLeft) {
             cellWrapper.getStyle().setLeft(editorLeft - (scrollLeft + rowLeft),
                     Style.Unit.PX);

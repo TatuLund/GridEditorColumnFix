@@ -2,6 +2,7 @@ package org.vaadin.grideditorcolumnfix.demo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 public class SimplePojo implements Serializable {
@@ -12,6 +13,7 @@ public class SimplePojo implements Serializable {
     private Date date;
     private BigDecimal number;
     private Integer stars;
+    private LocalDate ld;
     
     public SimplePojo() {
     }
@@ -23,6 +25,7 @@ public class SimplePojo implements Serializable {
         this.date = date;
         this.number = number;
 		this.stars = stars;
+		this.ld = LocalDate.now().minusDays(stars);
     }
 
 	public Integer getStars() {
@@ -49,6 +52,14 @@ public class SimplePojo implements Serializable {
         this.number = number;
     }
 
+    public LocalDate getLD() {
+    	return this.ld;
+    }
+    
+    public void setLD(LocalDate ld) {
+    	this.ld = ld;
+    }
+    
     public Date getDate() {
         return date;
     }

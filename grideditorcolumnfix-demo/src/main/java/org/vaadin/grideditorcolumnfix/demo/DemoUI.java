@@ -6,6 +6,7 @@ import org.vaadin.grideditorcolumnfix.GridEditorColumnFix;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -16,9 +17,12 @@ import java.util.Random;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.fasterxml.jackson.annotation.JsonFormat.Value;
 import com.vaadin.addon.charts.Chart;
+import com.vaadin.addon.charts.model.ChartModel;
 import com.vaadin.addon.charts.model.DataSeries;
 import com.vaadin.addon.charts.model.Series;
+import com.vaadin.addon.charts.themes.ValoDarkTheme;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -27,20 +31,27 @@ import com.vaadin.data.Binder.Binding;
 import com.vaadin.data.converter.LocalDateTimeToDateConverter;
 import com.vaadin.data.converter.StringToBigDecimalConverter;
 import com.vaadin.data.converter.StringToIntegerConverter;
+import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinServletService;
+import com.vaadin.shared.ui.grid.HeightMode;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.CssLayout;
+import com.vaadin.ui.DateField;
 import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.SelectionMode;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.renderers.HtmlRenderer;
 
 @Theme("demo")
@@ -73,6 +84,34 @@ public class DemoUI extends UI {
 		}
 
 		Binder<SimplePojo> binder = grid.getEditor().getBinder();
+		
+		grid.addComponentColumn(item -> { 
+			Panel panel = new Panel();
+			panel.setSizeFull();
+			Label label = new Label(item.getLD().toString());
+			label.setSizeFull();
+			DateField date = new DateField();
+			date.setSizeFull();
+			panel.addClickListener(event -> {
+				date.setValue(item.getLD());
+				panel.setContent(date);
+			});
+			date.addValueChangeListener(event -> {
+				item.setLD(date.getValue());
+				label.setValue(date.getValue().toString());				
+				panel.setContent(label);
+			});
+			date.addFocusListener(event -> {
+				
+			});
+			date.addBlurListener(event -> {
+				item.setLD(date.getValue());
+				label.setValue(date.getValue().toString());
+				panel.setContent(label);
+			});
+			panel.setContent(label);
+			return panel; 
+		}).setId("localDate");		
 		
 		TextField textField = new TextField();
 		Binding<SimplePojo, String> descriptionBinding = binder.forField(textField).asRequired("Empty value not accepted").bind(SimplePojo::getDescription,
@@ -110,7 +149,6 @@ public class DemoUI extends UI {
 		
 		grid.setItems(data);
 		grid.setSizeFull();
-		grid.setSelectionMode(SelectionMode.SINGLE);
 		grid.addSelectionListener(event -> {			
 			System.out.println("Selection");
 			grid.getSelectionModel().getFirstSelectedItem().ifPresent(item -> System.out.println(item.toString()));			
@@ -119,6 +157,16 @@ public class DemoUI extends UI {
 			grid.select(event.getBean());
 		});
 		
+		// Filtering example
+		grid.appendHeaderRow();
+		ListDataProvider<SimplePojo> dp = (ListDataProvider) grid.getDataProvider();
+		TextField filterField = new TextField();
+		filterField.setWidth("100%");
+		filterField.addValueChangeListener(event -> {
+			dp.setFilter(bean -> bean.getLD().toString(),value -> value.contains(event.getValue()));
+		});		
+		grid.getHeaderRow(1).getCell("localDate").setComponent(filterField);
+		grid.setHeaderRowHeight(42);
 		
 //		grid.setDetailsGenerator(item -> new Label(item.getDescription()));
 //		grid.addItemClickListener(event -> {
@@ -128,12 +176,18 @@ public class DemoUI extends UI {
         grid.getEditor().setEnabled(true);
         grid.getEditor().setBuffered(false);
 //        grid.setFrozenColumnCount(2);
+//        grid.setHeightMode(HeightMode.ROW);
+//        grid.setHeightByRows(grid.getDataCommunicator().getDataProviderSize());
+//        Panel panel = new Panel();
+//        panel.setSizeFull();
+//        panel.setContent(grid);
+        
         Chart chart = new Chart();
         DataSeries ds = new DataSeries();
         ds.setData(10,20,30,20,5,40,10);
         chart.getConfiguration().setSeries(ds);
         chart.setSizeFull();
-
+        
         // Show it in the middle of the screen
         final VerticalLayout layout = new VerticalLayout();
         layout.setStyleName("demoContentLayout");
@@ -141,8 +195,8 @@ public class DemoUI extends UI {
         layout.setExpandRatio(grid, 3);
         layout.setExpandRatio(chart, 1);
         layout.setSizeFull();
-        layout.setMargin(false);
-        layout.setSpacing(false);
+        layout.setMargin(true);
+        layout.setSpacing(true);
         setContent(layout);
     }
 }
