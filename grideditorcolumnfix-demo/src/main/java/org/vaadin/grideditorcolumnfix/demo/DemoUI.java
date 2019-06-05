@@ -158,14 +158,14 @@ public class DemoUI extends UI {
 		});
 		
 		// Filtering example
-		grid.appendHeaderRow();
 		ListDataProvider<SimplePojo> dp = (ListDataProvider) grid.getDataProvider();
 		TextField filterField = new TextField();
+		filterField.setPlaceholder("filter");
 		filterField.setWidth("100%");
 		filterField.addValueChangeListener(event -> {
 			dp.setFilter(bean -> bean.getLD().toString(),value -> value.contains(event.getValue()));
 		});		
-		grid.getHeaderRow(1).getCell("localDate").setComponent(filterField);
+		grid.getHeaderRow(0).getCell("localDate").setComponent(filterField);
 		grid.setHeaderRowHeight(42);
 		
 //		grid.setDetailsGenerator(item -> new Label(item.getDescription()));
