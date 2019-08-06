@@ -94,6 +94,8 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
             @Override
             public void execute(double timestamp) {
         		int cols = grid.getVisibleColumns().size();
+        		int offset = 0;
+        		if (grid.getSelectionColumn().isPresent()) offset = 1;
         		DivElement editorOverlay = getEditorOverlay(grid);
         		Double scrollerWidth = getVerticalScrollBarWidth();
         		Double gridWidth = (double) grid.getOffsetWidth();
@@ -102,7 +104,7 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
         		DivElement cellWrapper = getEditorCellWrapper(grid);
             	for (int i=0;i<cols;i++) {
             		Element element = (Element) cellWrapper.getChild(i);
-            		double width = grid.getVisibleColumns().get(i).getWidthActual();
+            		double width = grid.getVisibleColumns().get(i+offset).getWidthActual();
             		element.getStyle().setWidth(width, Style.Unit.PX);
             	}
             }
@@ -111,10 +113,12 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
             @Override
             public void execute(double timestamp) {
         		int cols = grid.getVisibleColumns().size();
+        		int offset = 0;
+        		if (grid.getSelectionColumn().isPresent()) offset = 1;
         		DivElement cellWrapper = getEditorCellWrapper(grid);
             	for (int i=0;i<cols;i++) {
             		Element element = (Element) cellWrapper.getChild(i);
-            		double width = grid.getVisibleColumns().get(i).getWidthActual();
+            		double width = grid.getVisibleColumns().get(i+offset).getWidthActual();
             		element.getStyle().setWidth(width, Style.Unit.PX);
             	}
             }

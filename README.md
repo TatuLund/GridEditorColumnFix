@@ -56,6 +56,9 @@ Debugging client side code in the grideditorcolumnfix-demo project:
  
 ## Release notes
 
+### Version 0.3.2
+- Fixed: The fixing logic did not work in multiselect mode 
+
 ### Version 0.3.1
 - Improved the scroll position fix and fixed side effects
 
