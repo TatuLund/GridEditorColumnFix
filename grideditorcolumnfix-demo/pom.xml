@@ -5,7 +5,7 @@
 	<groupId>org.vaadin</groupId>
 	<artifactId>grideditorcolumnfix-demo</artifactId>
 	<packaging>war</packaging>
-	<version>0.3.2</version>
+	<version>0.3.3</version>
 	<name>GridEditorColumnFix Add-on Demo</name>
 
 	<prerequisites>
@@ -16,8 +16,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<vaadin.version>8.8.5</vaadin.version>
-		<vaadin.plugin.version>8.8.5</vaadin.plugin.version>
+		<vaadin.version>8.9.0</vaadin.version>
+		<vaadin.plugin.version>8.9.0</vaadin.plugin.version>
 		<jetty.plugin.version>9.3.9.v20160517</jetty.plugin.version>
 	</properties>
 
@@ -123,6 +123,7 @@
 					<execution>
 						<configuration>
 							<!-- if you don't specify any modules, the plugin will find them -->
+							<style>OBF</style>
 						</configuration>
 						<goals>
 							<goal>resources</goal>

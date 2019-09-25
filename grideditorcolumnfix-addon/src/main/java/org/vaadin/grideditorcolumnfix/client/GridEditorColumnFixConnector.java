@@ -75,16 +75,22 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
 	}
 
 	private void doEditorScrollOffsetFix() {
-		double scrollLeft = grid.getScrollLeft();
-		DivElement cellWrapper = getEditorCellWrapper(grid);
-        TableRowElement rowElement = grid.getEscalator().getBody()
-                .getRowElement(grid.getEditor().getRow());
-        int rowLeft = Math.abs(rowElement.getAbsoluteLeft());
-        int editorLeft = Math.abs(cellWrapper.getAbsoluteLeft());
-        if (editorLeft != rowLeft) {
-            cellWrapper.getStyle().setLeft(editorLeft - (scrollLeft + rowLeft),
-                    Style.Unit.PX);
-        }
+		try {
+			double scrollLeft = grid.getScrollLeft();
+			DivElement cellWrapper = getEditorCellWrapper(grid);
+			TableRowElement rowElement = grid.getEscalator().getBody()
+					.getRowElement(grid.getEditor().getRow());
+			int rowLeft = Math.abs(rowElement.getAbsoluteLeft());
+			int editorLeft = Math.abs(cellWrapper.getAbsoluteLeft());
+			if (editorLeft != rowLeft) {
+				cellWrapper.getStyle().setLeft(editorLeft - (scrollLeft + rowLeft),
+						Style.Unit.PX);
+			}
+        } catch (IllegalStateException e) {
+            // IllegalStateException may occur if user has scrolled Grid so
+            // that Escalator has updated, and row under Editor is no longer
+            // there
+        }        
 	}
 	
     @Override

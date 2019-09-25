@@ -56,6 +56,9 @@ Debugging client side code in the grideditorcolumnfix-demo project:
  
 ## Release notes
 
+### Version 0.3.3
+- Fixed: open editor in unbuffered mode throws IllegalStateException when scrolling, see issue #2 
+
 ### Version 0.3.2
 - Fixed: The fixing logic did not work in multiselect mode 
 
