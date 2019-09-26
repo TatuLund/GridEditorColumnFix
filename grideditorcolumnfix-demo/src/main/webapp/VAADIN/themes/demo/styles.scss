@@ -30,7 +30,12 @@ $darkgreen: darken($green, 30%);
 		word-wrap: break-word;
 		overflow-y: auto;
 	}
-	
+
+    .v-tooltip {
+    	color: black !important;
+        background-color: white !important;
+    }
+   	
 	// You can also customize your component for the demo
 	// app, but remember that these styles are not part of
 	// the component. To include built-in CSS for your component,

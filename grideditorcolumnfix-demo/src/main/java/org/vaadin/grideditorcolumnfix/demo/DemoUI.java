@@ -116,7 +116,12 @@ public class DemoUI extends UI {
 		TextField textField = new TextField();
 		Binding<SimplePojo, String> descriptionBinding = binder.forField(textField).asRequired("Empty value not accepted").bind(SimplePojo::getDescription,
 				SimplePojo::setDescription);
-		grid.addColumn(SimplePojo::getDescription).setEditorBinding(descriptionBinding).setHidable(true).setCaption("Description").setStyleGenerator(item -> (item.getDescription().length() > 100 ? "long-text" : null)).setWidth(600);			
+		grid.addColumn(SimplePojo::getDescription)
+			.setEditorBinding(descriptionBinding)
+			.setHidable(true).setCaption("Description")
+			.setStyleGenerator(item -> (item.getDescription().length() > 100 ? "long-text" : null))
+			.setDescriptionGenerator(item -> (item.getDescription().length() > 100 ? "use scroller to show more" : null))
+			.setWidth(600);			
 		descriptionBinding.setReadOnly(true);
 		
 		TextField starsField = new TextField();
