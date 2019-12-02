@@ -50,6 +50,12 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
 		return editor.@com.vaadin.client.widgets.Grid.Editor::editorOverlay;
 	}-*/;
 
+    public static native final DivElement getFrozenCellWrapper(Grid<?> grid) /*-{
+		var editor = grid.@com.vaadin.client.widgets.Grid::getEditor()();
+		return editor.@com.vaadin.client.widgets.Grid.Editor::frozenCellWrapper;
+	}-*/;
+
+    
 	// Return -1.0 if Grid has no vertical scroll bar otherwise its width
 	private double getVerticalScrollBarWidth() {
 		for (Element e : getGridParts("div")) {
@@ -76,21 +82,34 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
 
 	private void doEditorScrollOffsetFix() {
 		try {
-			double scrollLeft = grid.getScrollLeft();
 			DivElement cellWrapper = getEditorCellWrapper(grid);
-			TableRowElement rowElement = grid.getEscalator().getBody()
-					.getRowElement(grid.getEditor().getRow());
+			if (cellWrapper == null) return; 
+			double scrollLeft = grid.getScrollLeft();
+			int row = grid.getEditor().getRow();
+			TableRowElement rowElement = grid.getEscalator().getBody().getRowElement(row);
 			int rowLeft = Math.abs(rowElement.getAbsoluteLeft());
 			int editorLeft = Math.abs(cellWrapper.getAbsoluteLeft());
-			if (editorLeft != rowLeft) {
-				cellWrapper.getStyle().setLeft(editorLeft - (scrollLeft + rowLeft),
+			int frozenWidth = 0;
+			if (grid.getScrollLeft() > 0 && grid.getFrozenColumnCount() > 0) {
+				DivElement frozenCellWrapper = getFrozenCellWrapper(grid);
+				frozenWidth = frozenCellWrapper.getOffsetWidth();
+				cellWrapper.getStyle().setLeft((frozenWidth - scrollLeft),
+						Style.Unit.PX);				
+			} else {
+				if (editorLeft != rowLeft) {
+					cellWrapper.getStyle().setLeft(editorLeft - (scrollLeft + rowLeft),
 						Style.Unit.PX);
+				}
 			}
         } catch (IllegalStateException e) {
             // IllegalStateException may occur if user has scrolled Grid so
             // that Escalator has updated, and row under Editor is no longer
             // there
-        }        
+		} catch (IndexOutOfBoundsException e) {
+			// IllegalStateException may occur if user has scrolled Grid so
+			// that Escalator has updated, and row under Editor is no longer
+			// there
+		}        
 	}
 	
     @Override
@@ -103,14 +122,17 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
         		int offset = 0;
         		if (grid.getSelectionColumn().isPresent()) offset = 1;
         		DivElement editorOverlay = getEditorOverlay(grid);
+        		if (editorOverlay == null) return;
         		Double scrollerWidth = getVerticalScrollBarWidth();
         		Double gridWidth = (double) grid.getOffsetWidth();
         		if (scrollerWidth > 0.0) gridWidth = gridWidth - scrollerWidth; 
         		editorOverlay.getStyle().setWidth(gridWidth, Style.Unit.PX);
         		DivElement cellWrapper = getEditorCellWrapper(grid);
+        		int frozenColumns = grid.getFrozenColumnCount();
             	for (int i=0;i<cols;i++) {
             		Element element = (Element) cellWrapper.getChild(i);
-            		double width = grid.getVisibleColumns().get(i+offset).getWidthActual();
+            		if (element == null) break;
+            		double width = grid.getVisibleColumns().get(i+offset+frozenColumns).getWidthActual();
             		element.getStyle().setWidth(width, Style.Unit.PX);
             	}
             }
@@ -118,13 +140,16 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
         AnimationCallback editorColumnWidthFix = new AnimationCallback() {
             @Override
             public void execute(double timestamp) {
+        		DivElement cellWrapper = getEditorCellWrapper(grid);
+        		if (cellWrapper == null) return;
         		int cols = grid.getVisibleColumns().size();
         		int offset = 0;
         		if (grid.getSelectionColumn().isPresent()) offset = 1;
-        		DivElement cellWrapper = getEditorCellWrapper(grid);
+        		int frozenColumns = grid.getFrozenColumnCount();
             	for (int i=0;i<cols;i++) {
             		Element element = (Element) cellWrapper.getChild(i);
-            		double width = grid.getVisibleColumns().get(i+offset).getWidthActual();
+            		if (element == null) break;
+            		double width = grid.getVisibleColumns().get(i+offset+frozenColumns).getWidthActual();
             		element.getStyle().setWidth(width, Style.Unit.PX);
             	}
             }

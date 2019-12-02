@@ -25,6 +25,10 @@ $darkgreen: darken($green, 30%);
 		}		
 	}
 
+	.v-grid-cell {
+		user-select: all;
+	}
+	
 	.v-grid-cell.long-text:hover {
 		white-space: normal;
 		word-wrap: break-word;

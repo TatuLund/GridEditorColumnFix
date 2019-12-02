@@ -6,7 +6,6 @@ import org.vaadin.grideditorcolumnfix.GridEditorColumnFix;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -17,12 +16,8 @@ import java.util.Random;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.fasterxml.jackson.annotation.JsonFormat.Value;
 import com.vaadin.addon.charts.Chart;
-import com.vaadin.addon.charts.model.ChartModel;
 import com.vaadin.addon.charts.model.DataSeries;
-import com.vaadin.addon.charts.model.Series;
-import com.vaadin.addon.charts.themes.ValoDarkTheme;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -36,11 +31,7 @@ import com.vaadin.data.validator.IntegerRangeValidator;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
-import com.vaadin.server.VaadinServletService;
-import com.vaadin.shared.ui.grid.HeightMode;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.DateTimeField;
 import com.vaadin.ui.Grid;
@@ -50,8 +41,6 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
-import com.vaadin.ui.renderers.ComponentRenderer;
 import com.vaadin.ui.renderers.HtmlRenderer;
 
 @Theme("demo")
@@ -151,16 +140,18 @@ public class DemoUI extends UI {
 				.withConverter(new StringToBigDecimalConverter("Must enter a number"))
 				.bind(SimplePojo::getNumber, SimplePojo::setNumber);
 		grid.addColumn(SimplePojo::getNumber).setEditorBinding(numberBinding).setHidable(true).setCaption("Value");
+//		grid.setFrozenColumnCount(1);
 		
 		grid.setItems(data);
 		grid.setSizeFull();
 		grid.addSelectionListener(event -> {			
 			System.out.println("Selection");
 			grid.getSelectionModel().getFirstSelectedItem().ifPresent(item -> System.out.println(item.toString()));			
-		});
-		grid.getEditor().addOpenListener(event -> {
-			grid.select(event.getBean());
-		});
+		});		
+//		grid.getEditor().addOpenListener(event -> {
+//			grid.select(event.getBean());
+//		});
+		grid.setSelectionMode(SelectionMode.NONE);
 		
 		// Filtering example
 		ListDataProvider<SimplePojo> dp = (ListDataProvider) grid.getDataProvider();
@@ -176,7 +167,7 @@ public class DemoUI extends UI {
 //		grid.setDetailsGenerator(item -> new Label(item.getDescription()));
 //		grid.addItemClickListener(event -> {
 //			if (grid.isDetailsVisible(event.getItem())) grid.setDetailsVisible(event.getItem(), false);
-//			else grid.setDetailsVisible(event.getItem(), true);			
+//			else grid.setDetailsVisible(event.getItem(), true);
 //		});
         grid.getEditor().setEnabled(true);
         grid.getEditor().setBuffered(false);

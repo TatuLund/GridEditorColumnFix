@@ -5,7 +5,7 @@
 	<groupId>org.vaadin</groupId>
 	<artifactId>grideditorcolumnfix-demo</artifactId>
 	<packaging>war</packaging>
-	<version>0.3.3</version>
+	<version>0.3.4</version>
 	<name>GridEditorColumnFix Add-on Demo</name>
 
 	<prerequisites>
@@ -118,13 +118,12 @@
 				<groupId>com.vaadin</groupId>
 				<artifactId>vaadin-maven-plugin</artifactId>
 				<version>${vaadin.plugin.version}</version>
+				<configuration>
+					<style>OBF</style>
+				</configuration>
 				<executions>
 					<!-- You are free to mark this as permanently ignored in Eclipse -->
 					<execution>
-						<configuration>
-							<!-- if you don't specify any modules, the plugin will find them -->
-							<style>OBF</style>
-						</configuration>
 						<goals>
 							<goal>resources</goal>
 							<goal>update-widgetset</goal>
