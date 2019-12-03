@@ -56,6 +56,9 @@ Debugging client side code in the grideditorcolumnfix-demo project:
  
 ## Release notes
 
+### Version 0.3.5
+- Additional fixes with frozen columns  
+
 ### Version 0.3.4
 - Fixed: The logic of the fixes did not take account the possible presence of frozen columns  
 
