@@ -151,7 +151,7 @@ public class DemoUI extends UI {
 //		grid.getEditor().addOpenListener(event -> {
 //			grid.select(event.getBean());
 //		});
-		grid.setSelectionMode(SelectionMode.NONE);
+		grid.setSelectionMode(SelectionMode.MULTI);
 		
 		// Filtering example
 		ListDataProvider<SimplePojo> dp = (ListDataProvider) grid.getDataProvider();

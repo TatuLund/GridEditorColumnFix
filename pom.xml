@@ -5,7 +5,7 @@
 	<groupId>org.vaadin</groupId>
 	<artifactId>grideditorcolumnfix-root</artifactId>
 	<packaging>pom</packaging>
-	<version>0.3.5</version>
+	<version>0.3.6</version>
 	<name>GridEditorColumnFix Add-on Root Project</name>
 
 	<prerequisites>

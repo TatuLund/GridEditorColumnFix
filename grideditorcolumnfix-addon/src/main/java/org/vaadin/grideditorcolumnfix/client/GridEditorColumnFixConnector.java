@@ -86,7 +86,11 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
 			if (cellWrapper == null) return; 
 			DivElement frozenCellWrapper = getFrozenCellWrapper(grid);
     		int offset = 0;
-    		if (grid.getSelectionColumn().isPresent()) offset = 1;
+    		double selectionWidth = -1.0;
+    		if (grid.getSelectionColumn().isPresent()) {
+    			offset = 1;
+    			selectionWidth = grid.getColumns().get(0).getWidthActual();
+    		}
 			double scrollLeft = grid.getScrollLeft();
 			int row = grid.getEditor().getRow();
 			TableRowElement rowElement = grid.getEscalator().getBody().getRowElement(row);
@@ -104,7 +108,10 @@ public class GridEditorColumnFixConnector extends AbstractExtensionConnector {
 				cellWrapper.getStyle().setLeft((frozenWidth - scrollLeft),
 						Style.Unit.PX);				
 			} else {
-				if (editorLeft != rowLeft) {
+				if (selectionWidth > 0) { 
+					cellWrapper.getStyle().setLeft((selectionWidth - scrollLeft),
+							Style.Unit.PX);				
+				} else if (editorLeft != rowLeft) {
 					cellWrapper.getStyle().setLeft(editorLeft - (scrollLeft + rowLeft),
 						Style.Unit.PX);
 				}

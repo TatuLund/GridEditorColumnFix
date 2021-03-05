@@ -56,6 +56,9 @@ Debugging client side code in the grideditorcolumnfix-demo project:
  
 ## Release notes
 
+### Version 0.3.6
+- Fix editor column resizing in multiselect mode
+
 ### Version 0.3.5
 - Additional fixes with frozen columns  
 
